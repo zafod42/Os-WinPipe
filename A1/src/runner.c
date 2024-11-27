@@ -63,6 +63,8 @@ int main(int argc, char* argv[]) {
     }
     perror(TAG"Create write process");
 
+    CloseHandle(hReadPipe);
+    CloseHandle(hWritePipe);
 
     WaitForSingleObject(srcPI.hProcess, INFINITE);
     WaitForSingleObject(sinkPI.hProcess, INFINITE);

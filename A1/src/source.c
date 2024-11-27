@@ -47,5 +47,7 @@ int main() {
         strcat(out_log, log);
         perror(out_log);
     }
+    CloseHandle(si.hStdOutput);
+    CloseHandle(hInFile);
     return 0;
 }
