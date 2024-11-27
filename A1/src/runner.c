@@ -15,6 +15,7 @@ int main(int argc, char* argv[]) {
     /* Create pipe with inheritence */
     ZeroMemory(&pipeSA, sizeof(pipeSA));
     pipeSA.nLength = sizeof(pipeSA);
+    pipeSA.lpSecurityDescriptor = NULL;
     pipeSA.bInheritHandle = TRUE;
     if (!CreatePipe(&hReadPipe, &hWritePipe, &pipeSA, 0)) {
         perror(TAG"Could not create pipe");

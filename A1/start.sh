@@ -9,7 +9,7 @@ echo
 cat file.txt
 echo
 
-echo "=== RESULT === (snake_cased)"
+echo "=== RESULT ==="
 echo
 
 cat output.txt
