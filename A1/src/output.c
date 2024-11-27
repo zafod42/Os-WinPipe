@@ -7,6 +7,9 @@
 
 #include <stdio.h>
 
+
+#define TAG "\033[33m[OUTPUT]\033[0m "
+
 char get_snake_case(char ch) {
     char result = ch;
     if (ch >= 'A' && ch <= 'Z') {
@@ -51,21 +54,28 @@ int main() {
     char buffer[256];
     char result[256];
 
-    int i = 0;
-    BOOL bResult;
-    DWORD dwRead;
-    char tmp;
-    while (dwRead != 0) {
-        bResult = ReadFile(si.hStdInput, &tmp, 1, &dwRead, NULL);
-        if (!bResult) {
-            perror("Failed");
-            exit(1);
-        }
-        buffer[i] = tmp;
-        i++;
-    }
-    snake_case(result, buffer);
-    printf("%s\n", result);
+    HANDLE hOutFile = CreateFile(
+            "output.txt",
+            GENERIC_WRITE,
+            FILE_SHARE_WRITE | FILE_SHARE_READ,
+            NULL,
+            CREATE_ALWAYS,
+            FILE_ATTRIBUTE_NORMAL,
+            NULL
+            );
 
+    BOOL bResult = TRUE;
+    DWORD dwRead = 1;
+    perror(TAG"Start read");
+    while (ReadFile(si.hStdInput, buffer, 255, &dwRead, NULL) && dwRead > 0) {
+        buffer[dwRead] = '\0';
+        snake_case(result, buffer);
+        bResult = WriteFile(hOutFile, result, strlen(result), NULL, NULL);
+        if (!bResult) {
+            perror(TAG"Failed to output txt to file");
+        }
+    }
+    perror(TAG"End read");
+    CloseHandle(hOutFile);
     return 0;
 }
