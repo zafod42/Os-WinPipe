@@ -46,6 +46,7 @@ int main() {
         strcpy(out_log, END_WRITE);
         strcat(out_log, log);
         perror(out_log);
+        fflush(stderr);
     }
     CloseHandle(si.hStdOutput);
     CloseHandle(hInFile);

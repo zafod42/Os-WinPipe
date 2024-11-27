@@ -4,3 +4,11 @@ nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
 Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore
 eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt
 in culpa qui officia deserunt mollit anim id est laborum.
+Can be a very helpful technique. Why would you want to flush an output buffer? 
+Usually when I do it, it's because the code is crashing and I'm trying to debug 
+something. The standard buffer will not print everytime you call printf() it 
+waits until it's full then dumps a bunch at once. So if you're trying to check 
+if you're making it to a function call before a crash, it's helpful to printf 
+something like "got here!", and sometimes the buffer hasn't been flushed 
+before the crash happens and you can't tell how far you've really gotten.
+

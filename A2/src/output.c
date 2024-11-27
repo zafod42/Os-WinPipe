@@ -6,53 +6,21 @@
 #include <windows.h>
 
 #include <stdio.h>
-
+#include <string.h>
 
 #define TAG "\033[33m[OUTPUT]\033[0m "
 
-char get_snake_case(char ch) {
-    char result = ch;
-    if (ch >= 'A' && ch <= 'Z') {
-        result = ch + 32;
-    } else if (ch == ' ') {
-        result = '_';
-    }
-    return result;
-}
-
-int is_punctuation(char ch) {
-    int result = 0;
-    char punct[] = ".,?!<>;:'\"`";
-    for (int i = 0; punct[i] != '\0'; ++i) {
-        if (punct[i] == ch) {
-            result = 1;
-            break;
-        }
-    }
-    return result;
-}
-
-void snake_case(char* destination, char* source) {
-    int i;
-    int j = 0;
-    for(i = 0; '\0' != source[i]; ++i) {
-        if (source[i] == ' ' && ((source[i + 1] == ' ') || is_punctuation(source[i]))) {
-            continue;
-        } else if (is_punctuation(source[i])) {
-            continue;
-        }
-        destination[j] = get_snake_case(source[i]);
-        j++;
-    }
-    destination[j] = '\0';    
-}
 
 int main() {
     STARTUPINFO si;
     GetStartupInfo(&si);
      
+
+    const char* LOG_FORMAT = "read %d";
+    const char* TAGGER = TAG;
     char buffer[256];
-    char result[256];
+    char log_out[256];
+    char log[256];
 
     HANDLE hOutFile = CreateFile(
             "output.txt",
@@ -64,15 +32,24 @@ int main() {
             NULL
             );
 
-    BOOL bResult = TRUE;
-    DWORD dwRead = 1;
+    BOOL bResult = FALSE;
+    DWORD dwRead;
     perror(TAG"Start read");
-    while (ReadFile(si.hStdInput, buffer, 255, &dwRead, NULL) && dwRead > 0) {
+    while (TRUE) {
+        bResult = ReadFile(si.hStdInput, buffer, 255, &dwRead, NULL);
+        if (!bResult || dwRead == 0) {
+            break;
+        }
         buffer[dwRead] = '\0';
-        snake_case(result, buffer);
-        bResult = WriteFile(hOutFile, result, strlen(result), NULL, NULL);
+        sprintf(log, LOG_FORMAT, dwRead);
+        strcpy(log_out, TAGGER);
+        strcat(log_out, log);
+        perror(log_out);
+        fflush(stderr);
+        bResult = WriteFile(hOutFile, buffer, strlen(buffer), NULL, NULL);
         if (!bResult) {
             perror(TAG"Failed to output txt to file");
+            break;
         }
     }
     perror(TAG"End read");
